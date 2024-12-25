@@ -762,7 +762,7 @@ class App {
 		}
 
 		$bulk = new \MongoDB\Driver\BulkWrite();
-		$bulk->update($_criteria, $_update, [ 'upsert' => false ]);
+		$bulk->update($_criteria, $_update, [ 'upsert' => false, 'multi' => true ]);
 		$result = R::app()->server->manager->executeBulkWrite("$db.$collection", $bulk);
 		break;
 
