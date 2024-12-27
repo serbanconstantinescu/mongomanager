@@ -33,6 +33,15 @@
 	console.log('pagenav: fdata=', fdata);
 	app.pjax.navigate($(this).attr('href'), { method: 'get', data: fdata, push: true });
     });
+
+    //preserve collapse
+    $('.collapse').off('shown.bs.collapse hidden.bs.collapse').on('shown.bs.collapse hidden.bs.collapse', function(e) {
+	localStorage.setItem('show_options', $(this).hasClass('show'));
+    });
+
+    if (localStorage.getItem('show_options') != 'false' && !$('.collapse').hasClass('d-none'))
+	bootstrap.Collapse.getOrCreateInstance($('.collapse')[0]).show();
+
 </script>
 
 <?php
@@ -94,7 +103,15 @@
 		]);
 	    ?>
 	    <input type="submit" class="btn btn-sm btn-success mb-2" value="Apply" pjax-submit>
-	    <a class="btn btn-sm btn-outline-primary mb-2 <?= ($command=='findAll' ? '' : 'd-none') ?>" data-bs-toggle="collapse" href="#options" role="button">Options</a>
+	    <?php
+		$__options = [
+		    'class' => 'btn btn-sm btn-outline-primary mb-2',
+		    'data-bs-toggle' => 'collapse',
+		    'role' => 'button',
+		];
+		$__options['class'] .= ($command == 'findAll' ? '' : ' d-none');
+		echo R::app()->html->link('Options', '#options', $__options);
+	    ?>
 	</div>
     </div>
 </form>
@@ -107,7 +124,13 @@
 	    if ($pager->total() == 0) {
 		echo "<div class='row mx-1'><div class='col-12'>No records found</div></div>";
 	    } else {
-		$params = [ 'db' => $db, 'collection' => $collection, 'pager' => $pager, 'rows' => $rows, 'criteria' => $criteria ];
+		$params = [
+		    'db' => $db,
+		    'collection' => $collection,
+		    'pager' => $pager,
+		    'rows' => $rows,
+		    'criteria' => $criteria,
+		];
 		echo R::app()->view->renderFile('collection_records', $params);
 	    }
 	    break;
