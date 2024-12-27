@@ -94,7 +94,7 @@
 		]);
 	    ?>
 	    <input type="submit" class="btn btn-sm btn-success mb-2" value="Apply" pjax-submit>
-	    <a class="btn btn-sm btn-outline-primary mb-2 <?=($command=='findAll'?'':'d-none')?>" data-bs-toggle="collapse" href="#options" role="button">Options</a>
+	    <a class="btn btn-sm btn-outline-primary mb-2 <?= ($command=='findAll' ? '' : 'd-none') ?>" data-bs-toggle="collapse" href="#options" role="button">Options</a>
 	</div>
     </div>
 </form>
@@ -107,13 +107,20 @@
 	    if ($pager->total() == 0) {
 		echo "<div class='row mx-1'><div class='col-12'>No records found</div></div>";
 	    } else {
-		$params = [ 'db' => $db, 'collection' => $collection, 'pager' => $pager, 'rows' => $rows, ];
+		$params = [ 'db' => $db, 'collection' => $collection, 'pager' => $pager, 'rows' => $rows, 'criteria' => $criteria ];
 		echo R::app()->view->renderFile('collection_records', $params);
 	    }
 	    break;
 	case 'update':
 	case 'remove':
-	    if ($count !== null)
-		echo "<div class='row mx-1'><div class='col-12'>$count records may be affected</div></div>";
+	    if (!empty($result)) {
+		echo "<div class='row mx-1'><div class='col-12'>";
+		echo 'Deleted: ' . $result->getDeletedCount() . '<br>';
+		echo 'Inserted: ' . $result->getInsertedCount() . '<br>';
+		echo 'Matched: ' . $result->getMatchedCount() . '<br>';
+		echo 'Modified: ' . $result->getModifiedCount() . '<br>';
+		echo 'Upserted: ' . $result->getUpsertedCount() . '<br>';
+		echo "</div></div>";
+	    }
 	    break;
     }

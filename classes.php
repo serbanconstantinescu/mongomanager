@@ -410,6 +410,7 @@ class Html {
 	$__input_options = $scope['input'] + [ 'id' => $scope['id'], 'value' => $scope['value'] ] + $options;
 	switch($scope['type']) {
 	    case 'select':
+		$__input_options['class'] = 'form-select';
 		$input = $this->select($name, $scope['list'], $__input_options);
 		break;
 	    case 'checkbox':

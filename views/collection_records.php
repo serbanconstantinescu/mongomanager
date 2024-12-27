@@ -24,10 +24,15 @@
 
 <!-- list all records -->
 <?php
-    $row_render = function($index, $row, $is_file, $pager, $db, $collection) {
+    $row_render = function($index, $row, $is_file, $pager, $db, $collection, $criteria) {
 	$actions = [];
 	if(!empty($row['r']['_id'])) {
-	    $url_params = [ 'db' => $db, 'collection' => $collection, 'id' => (string)$row['r']['_id'], ];
+	    $url_params = [
+		'db' => $db,
+		'collection' => $collection,
+		'id' => (string)$row['r']['_id'],
+		'criteria' => $criteria,
+	    ];
 
 	    //update
 	    $url = R::app()->url('app.document_edit', $url_params);
@@ -88,6 +93,6 @@
     echo '<div>';
     $is_file = preg_match("/\\.files$/", $collection);
     foreach ($rows as $index => $row)
-	echo $row_render($index, $row, $is_file, $pager, $db, $collection);
+	echo $row_render($index, $row, $is_file, $pager, $db, $collection, $criteria);
     echo '</div>';
 

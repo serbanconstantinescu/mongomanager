@@ -728,7 +728,7 @@ class App {
 		$bulk = new \MongoDB\Driver\BulkWrite();
 		$bulk->delete($_criteria);
 		$result = R::app()->server->manager->executeBulkWrite("$db.$collection", $bulk);
-		//$coll->deleteMany($_criteria);
+		$view_params['result'] = $result;
 		break;
 	    case $command == 'update' && R::app()->request->isPost():
 		//parse update
@@ -764,6 +764,7 @@ class App {
 		$bulk = new \MongoDB\Driver\BulkWrite();
 		$bulk->update($_criteria, $_update, [ 'upsert' => false, 'multi' => true ]);
 		$result = R::app()->server->manager->executeBulkWrite("$db.$collection", $bulk);
+		$view_params['result'] = $result;
 		break;
 
 	    case $command == 'findAll':
@@ -1153,7 +1154,12 @@ class App {
 		'body' => empty($id) ? 'Record inserted' : 'Record updated',
 	    ]);
 
-	    R::app()->response->redirect(R::app()->url('app.collection_browse', [ 'db' => $db, 'collection' => $collection ]));
+	    $url_params = [
+		'db' => $db,
+		'collection' => $collection,
+		'criteria' => R::app()->request->getQueryParam('criteria', ''),
+	    ];
+	    R::app()->response->redirect(R::app()->url('app.collection_browse', $url_params));
 	}
 
 	R::app()->render('document_edit', compact('db', 'collection', 'document', 'error', 'id'));
@@ -1189,7 +1195,13 @@ class App {
 	    ]);
 	}
 
-	R::app()->response->redirect(R::app()->url('app.collection_browse', [ 'db' => $db, 'collection' => $collection ]));
+	$url_params = [
+	    'db' => $db,
+	    'collection' => $collection,
+	    'criteria' => R::app()->request->getQueryParam('criteria', ''),
+	];
+
+	R::app()->response->redirect(R::app()->url('app.collection_browse', $url_params));
     }
 
     // * load single document
